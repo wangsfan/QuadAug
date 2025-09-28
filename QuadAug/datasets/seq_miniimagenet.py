@@ -26,14 +26,14 @@ class MiniImagenet(Dataset):
         self.target_transform = target_transform
         self.download = download
 
-        if download:
-            if os.path.isdir(root) and len(os.listdir(root)) > 0:
-                print('Download not needed, files already on disk.')
-            else:
-                from onedrivedownloader import download
-                ln = "https://unimore365-my.sharepoint.com/:u:/g/personal/263133_unimore_it/EYLmey_IMdVPtGCrCBx_CCMBToexGLjdFVy5mz5mo3Wpcg?download=1"
-                print('Downloading dataset')
-                download(ln, filename=os.path.join(root, 'miniImagenet.zip'), unzip=True, unzip_path=root, clean=True)
+        # if download:
+        #     if os.path.isdir(root) and len(os.listdir(root)) > 0:
+        #         print('Download not needed, files already on disk.')
+        #     else:
+        #         from onedrivedownloader import download
+        #         ln = "https://unimore365-my.sharepoint.com/:u:/g/personal/263133_unimore_it/EYLmey_IMdVPtGCrCBx_CCMBToexGLjdFVy5mz5mo3Wpcg?download=1"
+        #         print('Downloading dataset')
+        #         download(ln, filename=os.path.join(root, 'miniImagenet.zip'), unzip=True, unzip_path=root, clean=True)
 
         self.data = np.load(os.path.join(
             root, '%s_x.npy' %
@@ -107,13 +107,9 @@ class SequentialMiniImagenet(ContinualDataset):
     TRANSFORM = transforms.Compose(
         [transforms.RandomCrop(84, padding=4),
          transforms.RandomHorizontalFlip(),
-         transforms.ToTensor()])
-    # TRANSFORM = transforms.Compose(
-    #     [transforms.RandomCrop(84, padding=4),
-    #      transforms.RandomHorizontalFlip(),
-    #      transforms.ToTensor(),
-    #      transforms.Normalize(MEAN,
-    #                           STD)])
+         transforms.ToTensor(),
+         transforms.Normalize(MEAN,
+                              STD)])
 
     def get_data_loaders(self):
         transform = self.TRANSFORM
@@ -137,7 +133,7 @@ class SequentialMiniImagenet(ContinualDataset):
     def get_setting():
         return Namespace(**{
             "batch_size": 10,
-            "minibatch_size": 64,
+            "minibatch_size": 10,
             "scheduler": "simple",
             "scheduler_rate": 0.2,
             "n_epochs": 1,
