@@ -1,51 +1,224 @@
-## Introduction
-This is our implementation of our paper *Quadruplet Augmentation with Attribute and Structure Invariance for Online Continual Learning*. 
+# Quadruplet Augmentation (QuadAug)
 
-**Abstract**:
-Online Continual Learning (OCL) aims to learn from non-independently and identically distributed streaming data without relying on task boundaries during the training and testing stages. Previous OCL methods tend to suffer from two issues: shortcut feature trap and limited plasticity. We reveal that the two issues lead to two requirements of OCL: attribute invariance and structure invariance, where the former requires to capture the attributes of objects which maintain invariance during all sessions of OCL, and the latter requires to capture the relation of different attributes during OCL. From the causal analysis and Fourier transform perspectives, we propose the Quadruplet Augmentation (QuadAug), which preserves attribute and structure invariance by data and channel augmentation with four modules: P-aug, A-aug, CI-aug, CS-aug. First, we build a fine-grained structural causal model of OCL, and isolate the session-invariant attributes from confounding factors. Then, based on the observation of different roles of amplitude and phase components of Fourier domain during knowledge transfer, we propose a bidirectional data augmentation strategy, which effectively intervening on subtle confounding factors of OCL and preserves attribute invariance (P-aug and A-aug). Finally, we decompose the structure invariance into two necessary conditions: channel independence and channel sufficiency, and preserve channel independence via an inter channel discrepancy constraint (CI-aug) and channel sufficiency via adversarial learning between a channel sufficiency detector and classifiers (CS-aug), facilitating structure invariance across different sessions. Experimental results show that, QuadAug produces significant improvement against traditional OCL methods on three sequential datasets and three blurry datasets, with 2.3% to 6.9% improvement on Seq-CIFAR10 and 1.3% to 2.7% improvement on CIFAR10-Blurry30.
+Official implementation of our paper:
 
-## 📚 Dependencies
-- torch>=2.1.0
-- numpy
-- torchvision
-- kornia>=0.7.0
-- Pillow
-- timm==0.9.8
-- tqdm
-- onedrivedownloader
-- ftfy
-- regex
-- pyyaml 
+> **Quadruplet Augmentation with Attribute and Structure Invariance for Online Continual Learning**
 
+------
 
-## ⚙️ Setup
+## 📖 Overview
 
-- 📥 Install with `pip install -r requirements.txt` or run it directly with `uv run python main.py ...`
-- 🚀 Use `main.py` to run experiments.
-- 🧩 New models can be added to the `models/` folder.
-- 📊 New datasets can be added to the `datasets/` folder.
+Online Continual Learning (OCL) aims to train models on non-i.i.d. streaming data **without access to task boundaries** during both training and inference. Unlike traditional continual learning, OCL requires models to update in an online manner while preserving previously acquired knowledge.
 
+However, existing OCL approaches suffer from two fundamental challenges:
 
-## 🧪 Examples
+1. **Shortcut Feature Trap**
+    Models overfit to session-specific shortcut features, leading to catastrophic forgetting when distribution shifts.
+2. **Limited Plasticity**
+    Over-regularization strategies to prevent forgetting often restrict the model’s ability to learn new knowledge.
 
+------
 
-### Run a model
+## 🔍 Key Insight
 
-- Use python main.py to run experiments.
-- Use argument --load_best_args to use the best hyperparameters for each of the evaluation setting from the paper.
-- To reproduce the results for QuadAug in the paper run the following python main.py --dataset <dataset> --model quadaug --buffer_size <buffer_size> --load_best_args
+We reveal that these two issues correspond to two essential invariance requirements in OCL:
 
-```bash
+- **Attribute Invariance**
+   The model must capture object attributes that remain stable across sessions.
+- **Structure Invariance**
+   The model must preserve the relational structure among attributes during continuous updates.
+
+To address this, we analyze OCL from both:
+
+- **Causal Modeling Perspective**
+- **Fourier Domain Perspective**
+
+------
+
+## 🚀 Proposed Method: QuadAug
+
+We propose **Quadruplet Augmentation (QuadAug)** — a principled framework that enforces attribute and structure invariance via coordinated data- and channel-level augmentation.
+
+QuadAug consists of four modules:
+
+| Module    | Goal                          | Mechanism                                |
+| --------- | ----------------------------- | ---------------------------------------- |
+| **P-aug** | Preserve attribute invariance | Phase-domain intervention                |
+| **A-aug** | Preserve attribute invariance | Amplitude-domain intervention            |
+| **I-aug** | Enforce channel independence  | Inter-channel discrepancy constraint     |
+| **S-aug** | Enforce channel sufficiency   | Adversarial channel sufficiency learning |
+
+------
+
+## 🧠 Theoretical Foundation
+
+### 1️⃣ Fine-grained Structural Causal Model
+
+We build a structural causal model for OCL, decomposing latent factors into:
+
+- **Session-invariant class-related factors**
+- **Session-specific class-related factors**
+- **Class-irrelevant confounders**
+
+This formulation enables us to explicitly intervene on confounding factors while preserving invariant attributes.
+
+------
+
+### 2️⃣ Fourier Perspective on Knowledge Transfer
+
+We analyze the roles of:
+
+- **Amplitude** → captures attribute-related statistical properties
+- **Phase** → captures structural and semantic information
+
+Based on this observation, we design a **bidirectional Fourier-based augmentation strategy** (P-aug & A-aug), which:
+
+- Intervenes on subtle confounders
+- Preserves invariant object attributes
+- Enhances robustness to session shifts
+
+------
+
+### 3️⃣ Structure Invariance Decomposition
+
+We decompose structure invariance into two necessary conditions:
+
+- **Channel Independence**
+- **Channel Sufficiency**
+
+These are enforced via:
+
+- **I-aug**: Inter-channel discrepancy constraint
+- **S-aug**: Adversarial learning between a channel sufficiency detector and classifiers
+
+This ensures stable relational representations across sessions.
+
+------
+
+## 📊 Experimental Results
+
+QuadAug achieves consistent improvements across:
+
+- **4 Sequential datasets**
+- **3 Blurry datasets**
+
+### Performance Gains
+
+- **Seq-CIFAR10**: +2.3% ~ +6.9%
+- **CIFAR10-Blurry30**: +1.3% ~ +2.7%
+
+QuadAug demonstrates strong robustness under both clear task boundaries and highly overlapping blurry scenarios.
+
+------
+
+# 📚 Dependencies
+
+- `torch >= 2.1.0`
+- `torchvision`
+- `numpy`
+- `kornia >= 0.7.0`
+- `Pillow`
+- `timm == 0.9.8`
+- `tqdm`
+- `onedrivedownloader`
+- `ftfy`
+- `regex`
+- `pyyaml`
+
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+Or run directly with:
+
+```
+uv run python main.py ...
+```
+
+------
+
+# ⚙️ Setup & Usage
+
+## 🚀 Running Experiments
+
+Use `main.py` to run all experiments.
+
+To automatically load the best hyperparameters reported in the paper:
+
+```
+--load_best_args
+```
+
+### 🔬 Reproducing Paper Results
+
+```
 python main.py --dataset seq-cifar10 --model quadaug --buffer_size 1000 --load_best_args
+
 python main.py --dataset seq-cifar100 --model quadaug --buffer_size 1000 --load_best_args
+
 python main.py --dataset seq-cifar10-blurry --model quadaug --buffer_size 1000 --load_best_args
+
 python main.py --dataset seq-miniimg --model quadaug --buffer_size 1000 --load_best_args
 ```
 
-### Build a new model/dataset
+------
 
-New models can be added to the models/ folder. New datasets can be added to the datasets/ folder.
+# 🧩 Extending the Framework
 
+## ➕ Add a New Model
 
+1. Add your model to the `models/` folder.
+2. Register it in:
 
+```
+models/__init__.py
+```
+
+Modify the `get_all_models()` function accordingly.
+
+------
+
+## ➕ Add a New Dataset
+
+1. Add your dataset class to the `datasets/` folder.
+2. Register it in:
+
+```
+datasets/__init__.py
+```
+
+Modify the `get_all_datasets()` function accordingly.
+
+------
+
+## 📁 Dataset Path Configuration
+
+The automatic dataset download path is defined in:
+
+```
+utils/conf.py
+```
+
+Modify:
+
+```
+base_path_dataset()
+```
+
+to your local dataset directory before running experiments.
+
+------
+
+# 🏗 Project Structure
+
+```
+.
+├── models/           # Model implementations
+├── datasets/         # Dataset definitions
+├── utils/            # Utility functions
+├── main.py           # Entry point
+└── requirements.txt
+```
 
