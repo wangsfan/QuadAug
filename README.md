@@ -1,8 +1,19 @@
 # Quadruplet Augmentation (QuadAug)
 
-Official implementation of our paper:
-
-> **Quadruplet Augmentation with Attribute and Structure Invariance for Online Continual Learning**
+Official implementation of our paper: Quadruplet Augmentation with Attribute and Structure Invariance for Online Continual Learning. 
+Authors: Wu Jialu, Wang Shaofan, Sun Yanfeng, Wang Boyue, Yin Baocai. 
+When using our code, please cite the paper
+```
+@ARTICLE{11478810,
+  author={Wu, Jialu and Wang, Shaofan and Sun, Yanfeng and Wang, Boyue and Yin, Baocai},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Quadruplet Augmentation With Attribute and Structure Invariance for Online Continual Learning}, 
+  year={2026},
+  volume={48},
+  number={8},
+  pages={9876-9894},
+  doi={10.1109/TPAMI.2026.3681470}}
+```
 
 ------
 
